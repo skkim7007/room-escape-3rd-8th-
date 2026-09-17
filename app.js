@@ -564,7 +564,7 @@ loadState(); render(); if(state.screen==='game') startTimer(); registerWebMCP();
       const item = state.modalItem;
       body = `<div class="eyebrow">소지품</div><h2>${ITEMS[item].glyph} ${ITEMS[item].name}</h2><p>${ITEMS[item].description}</p><div class="modal-actions"><button class="button primary" data-action="closeModal">닫기</button></div>`;
     }
-    return `<div class="modal-backdrop" role="dialog" aria-modal="true"><section class="modal">${body}</section></div>`;
+    return `<div class="modal-backdrop" role="dialog" aria-modal="true"><section class="modal" tabindex="-1">${body}</section></div>`;
   }
 
   const sequences = [
@@ -599,7 +599,7 @@ loadState(); render(); if(state.screen==='game') startTimer(); registerWebMCP();
       'a giant woody grass that grows mainly in the tropics',
       'a feeling of support for someone or something'
     ];
-    return `<div class="eyebrow">청색 필터로 드러난 책 자물쇠</div><h2>문제를 풀며 책을 골라라</h2><p>각 뜻풀이의 영어 답을 머릿속으로 찾은 뒤, 그 답과 <em>첫 글자·끝 글자가 같은 제목</em>을 아래 책장에서 순서대로 고르세요.</p><ol class="shelf-clues">${clues.map((clue, index) => `<li class="${chosen[index] ? 'filled' : ''}"><b>${index + 1}</b><span>${clue}</span><strong>${chosen[index] ? title(chosen[index]) : '이 문제에 맞는 책을 선택'}</strong></li>`).join('')}</ol><div class="book-shelf" aria-label="책 제목 목록">${libraryBooks.map(([id, bookTitle]) => `<button class="book-spine ${chosen.includes(id) ? 'chosen' : ''}" data-action="addBook" data-value="${id}" ${chosen.includes(id) ? 'disabled' : ''}>${bookTitle}</button>`).join('')}</div><p class="book-note">책에는 번호도 설명도 없다. 뜻풀이의 답과 제목 양 끝의 알파벳을 비교하자. 아래 선택 목록의 책을 누르면 취소할 수 있다.</p><div class="book-order" aria-label="선택한 책 순서">${chosen.length ? chosen.map((id, index) => `<button data-action="removeBook" data-value="${index}" aria-label="${index + 1}번 선택 취소"><b>${index + 1}</b>${title(id)}</button>`).join('') : '<span>첫 번째 문제에 맞는 책부터 누르세요.</span>'}</div><p class="error" data-error></p><div class="modal-actions"><button class="button" data-action="resetBooks">순서 지우기</button><button class="button" data-action="closeModal">잠시 닫기</button><button class="button primary" data-action="submitBooks">세 권을 당긴다</button></div>`;
+    return `<div class="eyebrow">청색 필터로 드러난 책 자물쇠</div><h2>주어진 영영풀이에 해당하는 단어가 포함된 책을 고르시오.</h2><p>각 영영풀이의 답을 찾은 뒤, 그 단어가 제목에 포함된 책을 아래 책장에서 순서대로 고르세요.</p><ol class="shelf-clues">${clues.map((clue, index) => `<li class="${chosen[index] ? 'filled' : ''}"><b>${index + 1}</b><span>${clue}</span><strong>${chosen[index] ? title(chosen[index]) : '이 문제에 맞는 책을 선택'}</strong></li>`).join('')}</ol><div class="book-shelf" aria-label="책 제목 목록">${libraryBooks.map(([id, bookTitle]) => `<button class="book-spine ${chosen.includes(id) ? 'chosen' : ''}" data-action="addBook" data-value="${id}" ${chosen.includes(id) ? 'disabled' : ''}>${bookTitle}</button>`).join('')}</div><p class="book-note">영영풀이의 답이 제목에 직접 포함된 책을 고르자. 아래 선택 목록의 책을 누르면 취소할 수 있다.</p><div class="book-order" aria-label="선택한 책 순서">${chosen.length ? chosen.map((id, index) => `<button data-action="removeBook" data-value="${index}" aria-label="${index + 1}번 선택 취소"><b>${index + 1}</b>${title(id)}</button>`).join('') : '<span>첫 번째 문제에 맞는 책부터 누르세요.</span>'}</div><p class="error" data-error></p><div class="modal-actions"><button class="button" data-action="resetBooks">순서 지우기</button><button class="button" data-action="closeModal">잠시 닫기</button><button class="button primary" data-action="submitBooks">세 권을 당긴다</button></div>`;
   }
 
   function libraryChaseLockMarkup() {
@@ -654,7 +654,7 @@ loadState(); render(); if(state.screen==='game') startTimer(); registerWebMCP();
     if (!state.flags.lockerOpened && !state.flags.deskPatternSeen) return '교실 앞쪽 화면에서 뒤쪽 8개 책상을 조사하세요. 다른 의자보다 뒤로 빠져 나온 의자가 네 개 있습니다.';
     if (!state.flags.lockerOpened && state.flags.deskPatternSeen) return '교실의 2×4 책상 배열에서 의자가 빠져 나온 네 자리와 똑같은 위치의 사물함 핀을 누르세요.';
     if (!state.flags.libraryOpen && state.flags.noteCombined) return 'EIGHT=8, ONE=1, THREE=3, TWO=2입니다.';
-    if (!state.flags.libraryBooksSolved && state.flags.libraryOpen) return '각 뜻풀이의 답은 carp, bamboo, loyalty입니다. C…P, B…O, L…Y와 같은 양 끝 글자를 가진 제목을 순서대로 찾으세요.';
+    if (!state.flags.libraryBooksSolved && state.flags.libraryOpen) return '각 영영풀이의 답은 carp, bamboo, loyalty입니다. 이 단어가 포함된 책 제목을 순서대로 찾으세요.';
     if (!state.flags.librarySolved && state.flags.libraryBooksSolved) return 'START에서 EXIT까지 빈 통로만 따라가세요. 정답은 → ↑ → ↑ ↑ → 입니다.';
     if (!state.flags.digitalSolved && state.flags.librarySolved) return '일반적인 의미상 주어는 for+목적격, 사람의 성품을 나타내면 of+목적격입니다. 가정법은 If+과거형, would+동사원형을 씁니다.';
     if (!state.flags.dreamSolved && state.flags.digitalSolved) {
@@ -736,7 +736,19 @@ loadState(); render(); if(state.screen==='game') startTimer(); registerWebMCP();
     }, 90);
   }
 
-  function openModal(type) { state.modal = type; render(); setTimeout(() => root.querySelector('.modal button, .modal input')?.focus(), 0); }
+  function openModal(type) {
+    state.modal = type;
+    render();
+    setTimeout(() => {
+      const modal = root.querySelector('.modal');
+      if (type === 'workspaceShelf') {
+        modal?.focus();
+        if (modal) modal.scrollTop = 0;
+        return;
+      }
+      root.querySelector('.modal button, .modal input')?.focus();
+    }, 0);
+  }
   function closeModal() { state.modal = null; state.modalItem = null; render(); }
   function error(message) { const node = root.querySelector('[data-error]'); if (node) node.textContent = message; state.mistakes += 1; save(); }
 
@@ -900,7 +912,7 @@ loadState(); render(); if(state.screen==='game') startTimer(); registerWebMCP();
 
   function submitBooks() {
     const chosen = (state.bookChosen || []).join('|');
-    if (chosen !== 'pond|bamboo|loyalty') return error('서가가 꿈쩍하지 않는다. 각 뜻풀이의 영어 답을 다시 생각하고, 그 단어의 첫·끝 글자를 책 제목의 양 끝과 비교하자.');
+    if (chosen !== 'pond|bamboo|loyalty') return error('서가가 꿈쩍하지 않는다. 각 영영풀이의 영어 답을 다시 생각하고, 그 단어가 포함된 책 제목을 찾자.');
     state.flags.libraryBooksSolved = true;
     addJournal('도서관 책 순서: carp(C…P) → Carp in the Pond, bamboo(B…O) → Bamboo and Ginkgo, loyalty(L…Y) → Loyalty of the Dynasty.');
     notify('발소리가 가까워진다!'); startLibraryChase();
