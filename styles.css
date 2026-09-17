@@ -480,3 +480,7 @@ select { width:100%; min-height:46px; padding:0 12px; border:1px solid var(--lin
 .workspace-pin.active span{border-color:#f0c86f;background:radial-gradient(circle,#7a581e 0 32%,#2b2110 36% 68%,#d4a94e 72%);box-shadow:0 0 14px rgba(236,188,79,.62)}
 .lock-inscription{margin:17px auto 12px;padding:13px 18px;max-width:430px;border-left:2px solid #b58c45;background:rgba(229,185,93,.055);color:#dec58d;font:italic 1rem/1.55 Georgia,"Noto Serif KR",serif;text-align:center;letter-spacing:.05em;text-shadow:0 0 12px rgba(229,185,93,.15)}
 @media(max-width:560px){.workspace-shelf{grid-template-rows:repeat(5,62px);padding:10px}.shelf-cell b{font-size:1.35rem}.shelf-cell small{font-size:.64rem}.workspace-lock{grid-template-rows:repeat(5,47px);padding:12px}.workspace-pin span{width:20px;height:20px}}
+
+/* Keep the physical 3×5 workspace shelf unobstructed while it is being observed. */
+.game.scene-workspace .objective{display:none}
+.game.scene-workspace .topbar{justify-content:flex-end}
