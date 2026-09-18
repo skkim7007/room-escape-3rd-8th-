@@ -311,7 +311,10 @@ loadState(); render(); if(state.screen==='game') startTimer(); registerWebMCP();
   function safeLoad() {
     try {
       const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
-      if (saved && saved.screen === 'game') state = { ...freshState(), ...saved, modal: null };
+      if (saved && saved.screen === 'game') {
+        state = { ...freshState(), ...saved, modal: null };
+        state.selected = (state.selected || []).filter(item => item !== 'restoredNote');
+      }
     } catch (_) { /* start fresh */ }
   }
 
@@ -531,9 +534,14 @@ loadState(); render(); if(state.screen==='game') startTimer(); registerWebMCP();
   function inventoryMarkup() {
     const slots = [...state.inventory];
     while (slots.length < MAX_SLOTS) slots.push(null);
-    return slots.map((item, index) => item
-      ? `<button class="slot ${state.selected.includes(item) ? 'selected' : ''}" data-action="selectItem" data-value="${item}" aria-label="${ITEMS[item].name}"><span class="glyph">${ITEMS[item].glyph}</span><span class="name">${ITEMS[item].name}</span></button>`
-      : `<div class="slot empty" aria-label="빈 칸"><span class="glyph">·</span><span class="name">${index + 1}</span></div>`).join('');
+    return slots.map((item, index) => {
+      if (!item) return `<div class="slot empty" aria-label="빈 칸"><span class="glyph">·</span><span class="name">${index + 1}</span></div>`;
+      const isRestoredNote = item === 'restoredNote';
+      const action = isRestoredNote ? 'viewRestoredNote' : 'selectItem';
+      const selectedClass = !isRestoredNote && state.selected.includes(item) ? 'selected' : '';
+      const label = isRestoredNote ? `${ITEMS[item].name} 보기` : ITEMS[item].name;
+      return `<button class="slot ${selectedClass}" data-action="${action}" data-value="${item}" aria-label="${label}"><span class="glyph">${ITEMS[item].glyph}</span><span class="name">${ITEMS[item].name}</span></button>`;
+    }).join('');
   }
 
   function modalMarkup() {
@@ -769,6 +777,11 @@ loadState(); render(); if(state.screen==='game') startTimer(); registerWebMCP();
     if (action === 'pinToggle') return toggleLockerPin(Number(value));
     if (action === 'resetLockerPins') { state.lockerPins = []; return render(); }
     if (action === 'submitLockerPins') return submitLockerPins();
+    if (action === 'viewRestoredNote') {
+      state.selected = state.selected.filter(item => item !== 'restoredNote');
+      state.log = `${ITEMS.restoredNote.name}: ${ITEMS.restoredNote.description}`;
+      return openModal('restoredNote');
+    }
     if (action === 'selectItem') return selectItem(value);
     if (action === 'combine') return combineItems();
     if (action === 'libraryDoor') return libraryDoor();
@@ -878,6 +891,11 @@ loadState(); render(); if(state.screen==='game') startTimer(); registerWebMCP();
   }
 
   function selectItem(item) {
+    if (item === 'restoredNote') {
+      state.log = `${ITEMS[item].name}: ${ITEMS[item].description}`;
+      openModal('restoredNote');
+      return;
+    }
     if (state.selected.includes(item)) state.selected = state.selected.filter(id => id !== item);
     else { if (state.selected.length === 2) state.selected.shift(); state.selected.push(item); }
     state.log = `${ITEMS[item].name}: ${ITEMS[item].description}`; render();
